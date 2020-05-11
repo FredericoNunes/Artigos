@@ -156,6 +156,7 @@ class Arellano_Economy:
         B_sim_indices = np.empty(T, dtype=np.int64)
         B_sim_indices[0] = B_init
         q_sim = np.empty(T)
+        c_sim = np.empty(T)
         in_default_series = np.zeros(T, dtype=np.int64)
 
         for t in range(T-1):
@@ -174,12 +175,13 @@ class Arellano_Economy:
                     in_default = False
             B_sim_indices[t+1] = Bi_next
             q_sim[t] = self.Q[yi, int(Bi_next)]
-
+            c_sim[t] = self.ygrid[yi] - self.Q[yi, int(Bi_next)]*self.Bgrid[int(Bi_next)] + self.Bgrid[int(Bi_next)-1]
 
         q_sim[-1] = q_sim[-2]  # Extrapolate for the last price
         return_vecs = (self.ygrid[y_sim_indices],
                        self.Bgrid[B_sim_indices],
                        q_sim,
+                       c_sim,
                        in_default_series)
 
         return return_vecs

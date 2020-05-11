@@ -16,7 +16,7 @@ def graficoPreco(ae, nome):
     q_high = []
     for i in range(ae.nB):
         b = ae.Bgrid[i]
-        if -0.35 <= b <= 0:
+        if -0.5 <= b <= 0:
             x.append(b)
             q_low.append(ae.Q[iy_low, i])
             q_high.append(ae.Q[iy_high, i])
@@ -42,6 +42,7 @@ def graficoPreco(ae, nome):
     #    ax.annotate(str(j), xy=(i, j))
     ax.set_xlabel("$B'$",fontsize=20)
     ax.set_ylabel("$Preço Par$",fontsize=20)
+    ax.set_xlim(ae.Bgrid.min()-.1, 0.05)
     #ax.legend(loc='upper left', frameon=False)
     #return ({"q_high":q_high,"q_low":q_low}
     #fig.savefig('preco par '+nome, format='pdf')
@@ -71,14 +72,14 @@ def graficoJuros(ae, nome):
     q_high = []
     for i in range(ae.nB):
         b = ae.Bgrid[i]
-        if -0.25 <= b <= 0.01:
+        if -0.5 <= b <= 0.01:
             if (1 / ae.Q[iy_high, i] - 1) <= 1:
                 q_high.append(1 / ae.Q[iy_high, i] - 1)
                 x.append(b)
             if (1 / ae.Q[iy_low, i]) - 1 <= 1:
                 z.append(b)
                 q_low.append(1 / ae.Q[iy_low, i] - 1)
-    ax.set_ylim([-.05, .8])
+    ax.set_ylim([-.05, .55])
     ax.plot(x, q_high, '-o', label="$y_{Acima}$")
     ax.plot(z, q_low, '-o', label="$y_{Abaixo}$")
 
@@ -95,6 +96,7 @@ def graficoJuros(ae, nome):
 
     ax.set_xlabel("$B'$",fontsize=20)
     ax.set_ylabel("$Juros$",fontsize=20)
+    ax.set_xlim(ae.Bgrid.min() - .05, 0.05)
     ax.legend(loc='upper right', fontsize=20)
     #return ({"q_high":q_high,"q_low":q_low})
     #fig.savefig('Juros ' + nome,format='pdf')
@@ -155,7 +157,7 @@ def graficoFuncaoValor(ae, nome):
 
     ax.set_xlabel("$B$",fontsize=25)
     ax.set_ylabel("$V(y, B)$",fontsize=25)
-    ax.set_xlim(ae.Bgrid.min(), 0.05)
+    ax.set_xlim(ae.Bgrid.min()-.05, 0.05)
     ax.legend(fontsize=25)
     plt.yticks(fontsize=25)
     plt.xticks(fontsize=27)
@@ -174,7 +176,7 @@ def graficoFuncaoValor(ae, nome):
     for pos, (i, j) in enumerate(zip(ae.Bgrid, ae.V[iy_high][2:])):
         if count_low < 1:
             if str("{0:.7f}".format(ae.V[iy_low][pos])) != str("{0:.7f}".format(ae.V[iy_low][pos - 1])) and eliminar_primeiro_print_low != 0:
-                ax.annotate(str("{0:.2f}".format(i)), xy=(i, j - 0.11),size=25)
+                ax.annotate(str("{0:.2f}".format(i)), xy=(i, j - 0.98),size=25)
                 plt.axvline(x=i, color='orange',linewidth=4)
                 count_low += 1
         eliminar_primeiro_print_low += 1
@@ -204,37 +206,23 @@ def graficoDefault(ae, nome):
 
 def simulacao(ae):
     T = 250
-    y_vec, B_vec, q_vec, default_vec = ae.simulate(T)
+    y_vec, B_vec, q_vec, c_vec, default_vec = ae.simulate(T)
 
-    c_sim = []
+    c_sim = c_vec
     spread_sim = []
     tb_sim = []
 
     for i in range(len(B_vec) - 1):
-        c = y_vec[i] + B_vec[i] - q_vec[i] * B_vec[i]
-        r = 1 / q_vec[i] - 1
-        tb = (y_vec[i] - c) / y_vec[i]
-        c_sim.append(c)
+        r = 1 / q_vec[i+1] - 1
+        tb = (y_vec[i+1] - c_sim[i]) / y_vec[i]
         spread_sim.append(r * 100)
         tb_sim.append(tb * 100)
 
-    c_sim.append(c)
+
     spread_sim.append(r * 100)
     tb_sim.append(tb * 100)
 
-    # Pick up default start and end dates
-    start_end_pairs = []
-    i = 0
-    while i < len(default_vec):
-        if default_vec[i] == 0:
-            i += 1
-        else:
-            # If we get to here we're in default
-            start_default = i
-            while i < len(default_vec) and default_vec[i] == 1:
-                i += 1
-            end_default = i - 1
-            start_end_pairs.append((start_default, end_default))
+
 
     Parametros = {
         'input': {'variavel': ['β', 'γ', 'r', 'ρ', 'η', 'θ'],
