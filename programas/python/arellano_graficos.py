@@ -208,6 +208,7 @@ def simulacao(ae):
     T = 250
     y_vec, B_vec, q_vec, c_vec, default_vec = ae.simulate(T)
 
+    np.random.seed(42)
     c_sim = c_vec
     spread_sim = []
     tb_sim = []
@@ -226,24 +227,24 @@ def simulacao(ae):
 
     Parametros = {
         'input': {'variavel': ['β', 'γ', 'r', 'ρ', 'η', 'θ'],
-                  'valor': [round(ae.β, 2), round(ae.γ, 2), round(ae.r, 2), round(ae.ρ, 2), round(ae.η, 2),
-                            round(ae.θ, 2)]
+                  'valor': [round(ae.β, 6), round(ae.γ, 6), round(ae.r, 6), round(ae.ρ, 6), round(ae.η, 6),
+                            round(ae.θ, 6)]
                   },
 
         'simulacao_1': {'dados simulados': ['Spread Taxa de Juros', 'Balança Comercial', 'Consumo', 'Produto'],
-                        'média(x)': [round(np.mean(spread_sim), 2), round(np.mean(tb_sim), 2), round(np.mean(c_sim), 2),
-                                     round(np.mean(y_vec), 2)],
-                        'desvio padrão(x)': [round(np.std(spread_sim), 2), round(np.std(tb_sim), 2),
-                                             round(np.std(c_sim), 2), round(np.std(y_vec), 2)],
-                        'corr(x,y)': [round(np.corrcoef(spread_sim, y_vec)[0][1], 2),
-                                      round(np.corrcoef(tb_sim, y_vec)[0][1], 2),
-                                      round(np.corrcoef(c_sim, y_vec)[0][1], 2), ''],
-                        'corr(x,r-spread)': ['', round(np.corrcoef(spread_sim, tb_sim)[0][1], 2),
-                                             round(np.corrcoef(spread_sim, c_sim)[0][1], 2),
-                                             round(np.corrcoef(spread_sim, y_vec)[0][1], 2)]},
+                        'média(x)': [round(np.mean(spread_sim), 6), round(np.mean(tb_sim), 6), round(np.mean(c_sim), 6),
+                                     round(np.mean(y_vec), 6)],
+                        'desvio padrão(x)': [round(np.std(spread_sim), 6), round(np.std(tb_sim), 6),
+                                             round(np.std(c_sim), 6), round(np.std(y_vec), 6)],
+                        'corr(x,y)': [round(np.corrcoef(spread_sim, y_vec)[0][1], 6),
+                                      round(np.corrcoef(tb_sim, y_vec)[0][1], 6),
+                                      round(np.corrcoef(c_sim, y_vec)[0][1], 6), ''],
+                        'corr(x,r-spread)': ['', round(np.corrcoef(spread_sim, tb_sim)[0][1], 6),
+                                             round(np.corrcoef(spread_sim, c_sim)[0][1], 6),
+                                             round(np.corrcoef(spread_sim, y_vec)[0][1], 6)]},
 
         'simulacao_2': {'variavel': ['mean dívida externa', 'mean trade balance', 'mean default Probability'],
-                        'valor': [round(np.mean(B_vec), 2), round(np.mean(tb_sim), 2), round(np.mean(default_vec), 2)]
+                        'valor': [round(np.mean(B_vec), 6), round(np.mean(tb_sim), 6), round(np.mean(default_vec), 6)]
                         },
     }
 
