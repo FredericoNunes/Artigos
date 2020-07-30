@@ -249,3 +249,47 @@ def simulacao(ae):
     }
 
     return Parametros
+
+def plot_simulacao(ae):
+    T = 250
+
+    np.random.seed(42)
+    y_vec, B_vec, q_vec, c_vec, default_vec = ae.simulate(T)
+
+    # Pick up default start and end dates
+    start_end_pairs = []
+    i = 0
+    while i < len(default_vec):
+        if default_vec[i] == 0:
+            i += 1
+        else:
+            # If we get to here we're in default
+            start_default = i
+            while i < len(default_vec) and default_vec[i] == 1:
+                i += 1
+            end_default = i - 1
+            start_end_pairs.append((start_default, end_default))
+
+    plot_series = (y_vec, B_vec, q_vec)
+    titles = 'output', 'foreign assets', 'bond price'
+
+    fig, axes = plt.subplots(len(plot_series), 1, figsize=(10, 12))
+    fig.subplots_adjust(hspace=0.3)
+
+    for ax, series, title in zip(axes, plot_series, titles):
+        # Determine suitable y limits
+        s_max, s_min = max(series), min(series)
+        s_range = s_max - s_min
+        y_max = s_max + s_range * 0.1
+        y_min = s_min - s_range * 0.1
+        ax.set_ylim(y_min, y_max)
+        for pair in start_end_pairs:
+            ax.fill_between(pair, (y_min, y_min), (y_max, y_max),
+                            color='k', alpha=0.3)
+        ax.grid()
+        ax.plot(range(T), series, lw=2, alpha=0.7)
+        ax.set(title=title, xlabel="time")
+
+    plt.show()
+
+    return plt.show()
