@@ -50,12 +50,14 @@ class Arellano_Economy:
                  ny=21,          # number of points in y grid
                  nB=251,         # number of points in B grid
                  tol=1e-8,       # error tolerance in iteration
-                 maxit=10000):
+                 maxit=10000,
+                 ydefcost=0.94):
 
         # Save parameters
         self.β, self.γ, self.r = β, γ, r
         self.ρ, self.η, self.θ = ρ, η, θ
         self.ny, self.nB = ny, nB
+        self.ydefcost  = ydefcost
 
         # Create grids and discretize Markov process
         self.Bgrid = np.linspace(-.45, .45, nB)
@@ -70,7 +72,7 @@ class Arellano_Economy:
 
         # Output when in default
         ymean = np.mean(self.ygrid)
-        self.def_y = np.minimum(0.94 * ymean, self.ygrid)
+        self.def_y = np.minimum(self.ydefcost * ymean, self.ygrid)
 
         # Allocate memory
         self.Vd = np.zeros(ny)
